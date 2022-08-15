@@ -1,0 +1,10 @@
+- name: main_role_packages
+  hosts: server1, server2
+  roles:
+    - { role: packages, become: True }
+
+- name: main_role_docker
+  hosts: server1
+  roles:
+    - { role: docker, become: True }
+

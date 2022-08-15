@@ -1,0 +1,70 @@
+-----------------------------------------------------------------------------------------------------------------------
+
+host - main pc
+guest - virtual machine
+
+Hypervisors: KVM, XEN, VMware, VirtualBox, Parallels
+
+I type:  VMware к примеру, ставится специализированный софт (OS) прямо на железо, задача которого только запуск guest
+II type: Установка Hypervisor на OS host и после запуск с помощью приложения запускать virtual pc
+
+Vagrant работает с II типом
+
+box (golden image) - образ для развертки
+
+# info:   https://github.com/hashicorp/vagrant/wiki/Available-Vagrant-Plugins
+# images: https://app.vagrant.com/boxes/search
+# docs:   https://www.vagrantup.com/docs/vagrantfile/machine_settings
+-----------------------------------------------------------------------------------------------------------------------
+
+vagrant plugin install <Name>
+
+vagrant plugin update <Name>
+
+vagrant plugin uninstall <Name>
+
+vagrant init
+
+#check file
+vagrant validate
+
+vagrant up
+
+vagrant destroy <hostname>
+
+vagrant status <hostname>
+vagrant global-status
+
+# update ?
+vagrant reload <hostname>
+
+# stop
+vagrant halt (shutdown)
+
+#list of virtual
+vagrant list
+
+# pause
+vagrant suspend
+vagrant resume
+
+#Copy from host to guest
+vagrant upload <source> <destination> [hostname]
+
+# what is snapshot ?
+vagrant snapshot save update
+vagrant snapshot list
+vagrant snapshot restore update <name>
+
+#ssh
+vagrant ssh <hostname>
+vagrant ssh-config
+
+----------------------------------------------------------------------
+
+Ansible
+Chef
+Puppet
+Salt
+
+

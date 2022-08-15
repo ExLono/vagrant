@@ -1,0 +1,28 @@
+Vagrant.configure("2") do |config|
+  
+  # image
+  config.vm.box = "centos/7"
+
+  # RAM
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "4096"
+    vb.cpus = 4
+  end
+
+  #Config to install
+  config.vm.provision "shell", inline: <<-SHELL
+    yum -y update
+    yum install -y curl policycoreutils-python openssh-server perl
+    setenforce 0
+    systemctl enable sshd
+    systemctl start sshd
+    firewall-cmd --permanent --add-service=http
+    firewall-cmd --permanent --add-service=https
+    systemctl reload firewalld
+    yum install postfix
+    systemctl enable postfix
+    systemctl start postfix
+    curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+    EXTERNAL_URL="https://gitlab.test.com" yum install -y gitlab-ec
+  SHELL
+end

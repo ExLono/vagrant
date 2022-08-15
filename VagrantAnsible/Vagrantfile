@@ -1,0 +1,83 @@
+# Путь должен быть полность на английском языке к файлу
+# ansible либо установлен на хосте
+#
+#  config.vm.provision "ansible" do |ansible|
+#     ansible.playbook = "playbook.yml"
+#  end
+#
+# либо запущен через ansible_local
+# 
+# ---------------------------------------------------------------------------------------
+#
+# https://help.ubuntu.ru/wiki/vagrant
+#
+
+$mach_quant = 3
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/focal64"
+  config.vm.box_check_update = true
+
+# node 1
+  config.vm.define "server1" do |server1|
+    server1.vm.hostname = "server1.local"
+    server1.vm.network "public_network", bridge: "Intel(R) Dual Band Wireless-AC 3165",  ip: "192.168.1.161"
+    server1.vm.network "forwarded_port", guest: 80, host: 51211
+    server1.vm.provider "virtualbox" do |vb|
+      vb.memory = "4096"
+      vb.cpus = 2
+    server1.vm.provision "ansible_local" do |ansible|
+      ansible.playbook = "playbook.yml"
+    end
+   end
+
+   $script = <<-END
+    echo "I am server1..."
+    touch 1.txt
+    echo "I'm a text from Vagrantfile!" > 1.txt
+    echo "File was created, you can test it now!"
+    END
+
+    server1.vm.provision "shell", inline: $script
+
+  end
+
+# node 2
+  config.vm.define "server2" do |server2|
+    server2.vm.hostname = "server2.local"
+    server2.vm.network "public_network", bridge: "Intel(R) Dual Band Wireless-AC 3165", ip: "192.168.1.162"
+    server2.vm.provider "virtualbox" do |vb|
+      vb.memory = "2048"
+      vb.cpus = 2
+    server2.vm.provision "ansible_local" do |ansible|
+      ansible.playbook = "playbook.yml"
+    end
+    end
+
+    $script1 = <<-END
+    echo "I am server2..."
+    touch 2.txt
+    echo "I'm a text from Vagrantfile!" > 2.txt
+    echo "File was created, you can test it now!"
+    END
+
+    server2.vm.provision "shell", inline: $script1
+  end
+
+  # (1..$mach_quant).each do |i|
+  #  config.vm.define "node#{i}" do |node|
+  #    node.vm.network "public_network", bridge: "Intel(R) Dual Band Wireless-AC 3165", ip: "192.168.1.#{163+i}"
+  #    node.vm.hostname = "node#{i}"
+  #    node.vm.provider "virtualbox" do |vb|
+  #      vb.memory = 256
+  #      vb.cpus = 1
+  #      vb.gui = false
+  #    end
+  #  end
+  # end
+
+  # config.vm.provision "ansible_local" do |ansible|
+  #  ansible.playbook = "playbook.yml"
+  # end
+
+end

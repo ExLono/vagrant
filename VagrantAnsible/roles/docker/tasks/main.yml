@@ -1,0 +1,18 @@
+---
+- name: docker_isntall
+  ansible.builtin.shell: "curl -fsSL https://get.docker.com/ | sh"
+
+- name: docker avto start
+  ansible.builtin.service:
+
+- name: docker start
+  ansible.builtin.service:
+
+- name: docker version
+  ansible.builtin.shell: docker info
+
+- name: Executing a Command Using Shell Module
+  shell: docker info
+
+- name: Executing a command using command module
+  command: docker info

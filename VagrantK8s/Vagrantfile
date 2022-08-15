@@ -1,0 +1,47 @@
+# https://github.com/scriptcamp/vagrant-kubeadm-kubernetes
+$mach_quant = 2
+$IP_BASE = "192.168.100."
+$IP_START = 10
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/focal64"
+  config.vm.box_check_update = true
+
+# node 1
+  config.vm.define "master" do |master|
+    master.vm.hostname = "master-node"
+    master.vm.network "private_network", ip: $IP_BASE + "#{$IP_START}"
+    master.vm.provider "virtualbox" do |vb|
+      vb.memory = "4096"
+      vb.cpus = 2
+    end
+
+   $script = <<-END
+    apt-get update -y
+    echo "$IP_BASE$((IP_START))    master-node"   >> /etc/hosts
+    echo "$IP_BASE$((IP_START+1))  worker-node01" >> /etc/hosts
+    echo "$IP_BASE$((IP_START+2))  worker-node02" >> /etc/hosts
+    END
+
+    master.vm.provision "shell", inline: $script
+
+  end
+
+  (1..$mach_quant).each do |i|
+   config.vm.define "worker-node#{i}" do |node|
+     node.vm.network "private_network", ip: $IP_BASE + "#{$IP_START + i}"
+     node.vm.hostname = "node#{i}"
+     node.vm.provider "virtualbox" do |vb|
+       vb.memory = 2048
+       vb.cpus = 2
+       vb.gui = false
+     end
+   end
+  end
+
+  config.vm.provision "ansible_local" do |ansible|
+    ansible.playbook = "playbook.yml"
+  end
+
+
+end

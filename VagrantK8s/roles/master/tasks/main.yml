@@ -1,0 +1,19 @@
+---
+- name: Update
+  apt:
+    update_cache: yes
+    force_apt_get: yes
+
+- name: get_software
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items: 
+    - htop
+    - mc
+    - tar
+    - git
+    - curl
+    - nginx
+  notify:
+    - restart nginx
